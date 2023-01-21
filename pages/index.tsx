@@ -1,22 +1,28 @@
-import Head from 'next/head'
-import Layout, { siteTitle } from '../components/layout'
-import utilStyles from '../styles/utils.module.css'
-import { getSortedPostsData } from '../lib/posts'
-import Link from 'next/link'
-import Date from '../components/date'
+import {GetStaticProps} from 'next';
+import Link from 'next/link';
+import Head from 'next/head';
+import Layout, { siteTitle } from '../components/layout';
+import utilStyles from '../styles/utils.module.css';
+import { getSortedPostsData } from '../lib/posts';
+import Date from '../components/date';
 
-export default function Home({ allPostsData }) {
+type Props = {
+    allPostsData: {
+        date: string
+        title: string
+        id: string
+    }[]
+}
+
+export default function Home({ allPostsData }: Props) {
     return (
         <Layout home>
             <Head>
                 <title>{siteTitle}</title>
             </Head>
             <section className={utilStyles.headingMd}>
-                <p>I'm Ivan</p>
-                <p>
-                    (This is a sample website - you’ll be building a site like this in{' '}
-                    <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
-                </p>
+                <p>I'm Ivan. I'm javaScript developer.</p>
+
             </section>
             <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
                 <h2 className={utilStyles.headingLg}>Blog</h2>
@@ -36,7 +42,7 @@ export default function Home({ allPostsData }) {
     )
 }
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps = async () => {
     const allPostsData = getSortedPostsData()
     return {
         props: {
