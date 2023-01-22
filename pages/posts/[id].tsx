@@ -1,50 +1,49 @@
-import {GetStaticPaths, GetStaticProps} from 'next';
+import {GetStaticPaths, GetServerSideProps} from 'next';
 import Head from 'next/head';
 
-import Layout from '../../components/layout'
-import { getAllPostIds, getPostData } from '../../lib/posts'
-import Date from '../../components/date'
+import Layout from '../../components/layout';
+import Date from '../../components/date';
 
-import utilStyles from '../../styles/utils.module.css'
-
+import utilStyles from '../../styles/utils.module.css';
 type Props = {
-    postData: {
+    post: {
+        _id: string;
         title: string;
         date: string;
-        contentHtml: string
-    }
-}
+        text: string
+    },
+};
 
-export default function Post({ postData } : Props ) {
+export default function Post({ post } : Props ) {
     return (
         <Layout>
             <Head>
-                <title>{postData.title}</title>
+                <title>{post.title}</title>
             </Head>
+
             <article>
-                <h1 className={utilStyles.headingXl}>{postData.title}</h1>
+                <h1 className={utilStyles.headingXl}>{post.title}</h1>
                 <div className={utilStyles.lightText}>
-                    <Date dateString={postData.date} />
+                    <Date dateString={post.date} />
                 </div>
-                <div dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
+                <div dangerouslySetInnerHTML={{ __html: post.text }} />
             </article>
         </Layout>
     )
-}
+};
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const paths = getAllPostIds()
-    return {
-        paths,
-        fallback: false
-    }
-}
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+    try{
+        const res = await fetch(`${process.env.API_ROUTES_URL}/api/posts`);
+        const data = await res.json();
+        const post = data.find(post => post._id === params.id);
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const postData = await getPostData(params?.id as string)
-    return {
-        props: {
-            postData
-        }
+        return {
+            props: {
+                post,
+            },
+        };
+    } catch (err) {
+        console.log(err.message);
     }
-}
+};
