@@ -1,4 +1,4 @@
-import { GetStaticProps, GetServerSideProps} from 'next';
+import { GetServerSideProps} from 'next';
 import Link from 'next/link';
 import Head from 'next/head';
 
